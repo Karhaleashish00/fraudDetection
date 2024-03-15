@@ -1,0 +1,17 @@
+=============
+Past code 1 :
+==============
+    '''
+    ------------------upper code is replaced with this following------------------------------
+    pattern = [{'POS': 'PRON'}, {'POS': 'PRON'}]
+    print(nameofperson)
+
+    matcher.add('NAME', [pattern])
+
+    matches = matcher(nlp_text)
+
+    for match_id, start, end in matches:
+      span = nlp_text[start:end]
+      return span.text
+    '''
+================================================================================================
