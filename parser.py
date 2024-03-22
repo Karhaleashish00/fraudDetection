@@ -5,6 +5,7 @@ import spacy
 from flask import jsonify
 from spacy.matcher import Matcher
 import clgparser
+import NameExtractor
 
 
 # Load English tokenizer, tagger, parser, NER, and word vectors
@@ -23,6 +24,20 @@ def extract_name(resume_text):
     except Exception as e:
         pass
     # past code 1
+
+
+def extract_name_nltk(pdf_path):
+    ignore_words_file_path = 'excluded_words.txt'  # Replace with the path to your ignore words file
+    ignore_words = NameExtractor.load_ignore_words(ignore_words_file_path)
+
+    # Add NLTK English stopwords to ignore_words
+    english_stopwords = set(NameExtractor.stopwords.words('english'))
+    ignore_words.update(english_stopwords)
+
+    largest_font_line = NameExtractor.find_largest_font_line(pdf_path, ignore_words)
+    # Remove everything except letters and spaces
+    largest_font_line = re.sub(r'[^a-zA-Z\s]', '', largest_font_line)
+    return largest_font_line
 
 
 def extract_email(resume_text):
@@ -58,7 +73,7 @@ def get_resume_list():
             file_path = os.path.join(folder_path, filename)
             resume_list1.append(file_path)
             count = count + 1
-            if count == 10:
+            if count == 1000 :
                 break
     print(" count  = ", count)
     return resume_list1
@@ -79,10 +94,10 @@ def get_parsed_data():
                 text = first_page.extract_text().strip()
 
                 # Extract name from the text
-                name = extract_name(text)
+                name = extract_name_nltk(file)
                 email = extract_email(text)
                 mobile_number = extract_phone_numbers(text)
-                clg = clgparser.extactcollegs(file)
+                clg_and_text = clgparser.extactcollegs(file)
 
                 eachdatadict = {}
                 index = file.find('/')
@@ -94,7 +109,8 @@ def get_parsed_data():
                 eachdatadict.update({'name': name})
                 eachdatadict.update({'email': email})
                 eachdatadict.update({'mobile_number': mobile_number})
-                eachdatadict.update({'college': clg})
+                eachdatadict.update({'college': clg_and_text['colleges']})
+                eachdatadict.update(({'resume_text' : clg_and_text['page_text']}))
         except KeyError:
             continue
         except PyPDF2.errors.PdfReadError:

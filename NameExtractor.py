@@ -1,5 +1,6 @@
 import os
-import fitz  # PyMuPDF
+# PyMuPDF
+import fitz
 import re
 import nltk
 from nltk.corpus import stopwords
@@ -13,10 +14,12 @@ def load_ignore_words(file_path):
     return ignore_words
 
 def find_largest_font_line(pdf_path, ignore_words, max_lines=10):
-    doc = fitz.open(pdf_path)
     largest_font_size = 0
     largest_font_line = ""
-
+    try:
+        doc = fitz.open(pdf_path)
+    except:
+        return largest_font_line
     # Regular expression pattern to match common website patterns
     website_pattern = r'\b(?:https?://|www\.)\S+\b'
 
@@ -35,7 +38,7 @@ def find_largest_font_line(pdf_path, ignore_words, max_lines=10):
                 font_sizes.append(font_size)
                 # Accumulate text for the line
                 line_text += text
-            
+
             # Check if any word in the line is in ignore_words or if the line contains a website pattern
             line_text = ' '.join(word for word in line_text.split() if word.lower() not in ignore_words and not re.match(website_pattern, word, re.IGNORECASE))
 
@@ -67,16 +70,3 @@ def process_pdfs_in_directory(directory_path, ignore_words):
             largest_font_line = re.sub(r'[^a-zA-Z\s]', '', largest_font_line)
             results[filename] = largest_font_line
     return results
-
-# Example usage
-directory_path = r'C:\Users\Prasen\Desktop\Internship\Project 1\Resume\Resume'  # Replace with the directory containing your PDF files
-ignore_words_file_path = 'excluded_words.txt'  # Replace with the path to your ignore words file
-ignore_words = load_ignore_words(ignore_words_file_path)
-
-# Add NLTK English stopwords to ignore_words
-english_stopwords = set(stopwords.words('english'))
-ignore_words.update(english_stopwords)
-
-results = process_pdfs_in_directory(directory_path, ignore_words)
-for filename, largest_font_line in results.items():
-    print(f"PDF: {filename}, Person Name is: {largest_font_line}")
