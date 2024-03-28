@@ -73,7 +73,7 @@ def get_resume_list():
             file_path = os.path.join(folder_path, filename)
             resume_list1.append(file_path)
             count = count + 1
-            if count == 1000 :
+            if count == 1000:
                 break
     print(" count  = ", count)
     return resume_list1
@@ -81,7 +81,10 @@ def get_resume_list():
 def get_parsed_data():
     data = []
     resume_list = get_resume_list()
+    c = 1
     for file in resume_list:
+        print(c)
+        c += 1
         try:
             with open(file, "rb") as pdf_file:
                 # Create a PDF reader object
