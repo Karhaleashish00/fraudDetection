@@ -1,6 +1,5 @@
-import spacy
-import re
 import PyPDF2
+import spacy
 import tabula
 
 import clgparser
@@ -32,15 +31,14 @@ def table_data(resume):
                                   fields]  # Replace '\r' with space in each field
                 for field in cleaned_fields:
                     clg.add(field)
-            # Now you can process the table text as needed
             return clg
     except:
         pass
 
 
 def extactcollegs(resume):
-    # Create a PDF reader object
     global doc
+    # Create a PDF reader object
     pdf_reader = PyPDF2.PdfReader(resume)
 
     # Initialize a variable to store college names

@@ -8,10 +8,12 @@ from nltk.corpus import stopwords
 # Download NLTK stopwords if not already downloaded
 nltk.download('stopwords')
 
+
 def load_ignore_words(file_path):
     with open(file_path, 'r') as file:
         ignore_words = {line.strip().lower() for line in file}
     return ignore_words
+
 
 def find_largest_font_line(pdf_path, ignore_words, max_lines=10):
     largest_font_size = 0
@@ -40,7 +42,9 @@ def find_largest_font_line(pdf_path, ignore_words, max_lines=10):
                 line_text += text
 
             # Check if any word in the line is in ignore_words or if the line contains a website pattern
-            line_text = ' '.join(word for word in line_text.split() if word.lower() not in ignore_words and not re.match(website_pattern, word, re.IGNORECASE))
+            line_text = ' '.join(word for word in line_text.split() if
+                                 word.lower() not in ignore_words and not re.match(website_pattern, word,
+                                                                                   re.IGNORECASE))
 
             # Check if line contains keywords like "Name" only in the first max_lines
             if line_count < max_lines and "name" in line_text.lower():
@@ -57,7 +61,6 @@ def find_largest_font_line(pdf_path, ignore_words, max_lines=10):
     largest_font_line = re.sub(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', '', largest_font_line)
 
     return largest_font_line
-
 
 
 def process_pdfs_in_directory(directory_path, ignore_words):
