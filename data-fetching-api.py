@@ -22,7 +22,7 @@ def get_data():
     return jsonify(dict)
 
 
-@app.route("/fetch-  details") # this route fetch users details from database add returns a json object
+@app.route("/fetch-details") # this route fetch users details from database add returns a json object
 def fetch_details():
     db = get_db()
     cursor = db.cursor()
